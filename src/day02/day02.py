@@ -7,10 +7,10 @@ Template code
 from pathlib import Path
 
 PROGBLEM_INPUT_TXT = Path("/Users/pergrapatin/Source/AOC2021/src/"\
-    +"day01/input.txt").read_text()
+    +"day02/input.txt").read_text()
 
-EXAMPLE_INPUT1 = """1"""
-EXAMPLE_RESULT1 = 0
+EXAMPLE_INPUT1 = """"""
+EXAMPLE_RESULT1 = 1514
 
 def string_worker(input_string):
     """Helper string worker function
@@ -21,18 +21,22 @@ def string_worker(input_string):
 def problem_a(input_string, expected_result):
     """Problem A solved function
     """
+
     rows = input_string.split('\n')
 
-    current = -1
-    count = 0
+    depth = 0
+    forward = 0
 
     for row in rows:
-        temp = int(row)
-        if current > 0 and temp > current:
-            count += 1
-        current = temp
+        number = int(row.split()[1])
+        if 'forw' in row:
+            forward += number
+        elif 'up' in row:
+            depth -= number
+        else:
+            depth += number
 
-    solution = count
+    solution = forward*depth
 
     if solution == expected_result:
         print("Correct solution found:", solution)
@@ -40,26 +44,35 @@ def problem_a(input_string, expected_result):
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
 def problem_b(input_string, expected_result):
-    """Problem A solved function
+    """Problem B solved function
     """
+
     rows = input_string.split('\n')
 
-    current = -1
-    count = 0
-    for pos in range(2, len(rows)):
-        temp = int(rows[pos-2]) + int(rows[pos]) + int(rows[pos-1])
-        if current > 0 and temp > current:
-            count += 1
-        current = temp
-    solution = count
+    aim = 0
+    depth = 0
+    forward = 0
+
+    for row in rows:
+        number = int(row.split()[1])
+        if 'forw' in row:
+            forward += number
+            depth = depth +aim*number
+        elif 'up' in row:
+            aim -= number
+        else:
+            aim += number
+
+
+    solution = forward*depth
 
     if solution == expected_result:
         print("Correct solution found:", solution)
     else:
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
-problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
-problem_a(PROGBLEM_INPUT_TXT, 1665)
+#problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
+problem_a(PROGBLEM_INPUT_TXT, 0)
 print("\n")
+problem_b(PROGBLEM_INPUT_TXT, 0)
 
-problem_b(PROGBLEM_INPUT_TXT, 1702)

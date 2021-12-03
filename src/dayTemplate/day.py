@@ -6,7 +6,7 @@ Template code
 #import Path for file operations
 from pathlib import Path
 
-PROGBLEM_INPUT_TXT = Path("/Users/pergrapatin/Source/AOC2015/src/"\
+PROGBLEM_INPUT_TXT = Path("/Users/pergrapatin/Source/AOC2021/src/"\
     +"dayXX/input.txt").read_text()
 
 EXAMPLE_INPUT1 = """"""
@@ -28,6 +28,6 @@ def problem_a(input_string, expected_result):
     else:
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
-problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
+#problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
 problem_a(PROGBLEM_INPUT_TXT, 0)
 print("\n")
