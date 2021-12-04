@@ -51,12 +51,9 @@ def problem_a(input_string, expected_result):
         else:
             binary_gamma = binary_gamma + '1'
             binary_epsilon = binary_epsilon + '0'
-
     
     b_int_gamma = int(binary_gamma, 2)
     b_int_epsilon = int(binary_epsilon, 2)
-    
-
 
     solution = b_int_gamma*b_int_epsilon
 
