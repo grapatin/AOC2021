@@ -59,7 +59,6 @@ class bingo_card:
             b_n.found = True
             self.numbers_found_in_row[b_n.row] += 1
             self.numbers_found_in_col[b_n.pos] += 1
-            self.storage_dict[number] = b_n
 
     def check_for_bingo(self):
         for row_check in self.numbers_found_in_row:
@@ -90,20 +89,15 @@ class player_class:
             self.bingo_cards[bing_n] = bingo_card(parts[bing_n])
     
     def play(self):
-        bingo = False
-        while bingo == False:
-            for drawn_number in self.numbers_to_draw:
-                for bingo_card_n in self.bingo_cards:
-                    bingo_card = self.bingo_cards[bingo_card_n]
-                    bingo_card.check_for_number(drawn_number)
-                    if bingo_card.check_for_bingo() == True:
-                        bingo = True
-                        return bingo_card.calculate_score(drawn_number)
+        for drawn_number in self.numbers_to_draw:
+            for bingo_card_n in self.bingo_cards:
+                bingo_card = self.bingo_cards[bingo_card_n]
+                bingo_card.check_for_number(drawn_number)
+                if bingo_card.check_for_bingo() == True:
+                    return bingo_card.calculate_score(drawn_number)
     
     def play_part2(self):
         boards_with_bingo = 0
-        last_bingo_board = 0
-        last_number = 0
         for drawn_number in self.numbers_to_draw:
             for bingo_card_n in self.bingo_cards:
                 bingo_card = self.bingo_cards[bingo_card_n]
