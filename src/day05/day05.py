@@ -39,17 +39,13 @@ def problem_a(input_string, expected_result):
         y2 = int(start_stop[1].split(',')[1])
         if (x1 == x2):
             if y2 < y1:
-                yT = y2
-                y2 = y1
-                y1 = yT
+                y1, y2 = y2, y1
             for ycord in range(y1, y2+1):
                 search_strign = string_builder(x1, ycord)
                 add_point(storage_dict, search_strign)
         if (y1 == y2):
             if x2 < x1:
-                xT = x2
-                x2 = x1
-                x1 = xT
+                x1, x2 = x2, x1
             for xcord in range(x1, x2+1):
                 search_strign = string_builder(xcord, y1)
                 add_point(storage_dict, search_strign)
@@ -84,20 +80,16 @@ def problem_b(input_string, expected_result):
         y2 = int(start_stop[1].split(',')[1])
         if (x1 == x2):
             if y2 < y1:
-                yT = y2
-                y2 = y1
-                y1 = yT
+                y1, y2 = y2, y1
             for ycord in range(y1, y2+1):
-                search_strign = string_builder(x1, ycord)
-                add_point(storage_dict, search_strign)
+                search_string = string_builder(x1, ycord)
+                add_point(storage_dict, search_string)
         elif (y1 == y2):
             if x2 < x1:
-                xT = x2
-                x2 = x1
-                x1 = xT
+                x1, x2 = x2, x1
             for xcord in range(x1, x2+1):
-                search_strign = string_builder(xcord, y1)
-                add_point(storage_dict, search_strign)
+                search_string = string_builder(xcord, y1)
+                add_point(storage_dict, search_string)
         else:           
             #45 degree line
             if y2 < y1:
@@ -110,8 +102,8 @@ def problem_b(input_string, expected_result):
                 x_delta = 1
             diff = abs(x2 - x1)
             for delta in range(diff+1):
-                search_strign = string_builder(x1+(delta*x_delta), y1+(delta*y_delta))
-                add_point(storage_dict, search_strign)
+                search_string = string_builder(x1+(delta*x_delta), y1+(delta*y_delta))
+                add_point(storage_dict, search_string)
 
     solution = 0 
     for point in storage_dict:
@@ -126,9 +118,9 @@ def problem_b(input_string, expected_result):
 
 
 problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
-problem_a(PROGBLEM_INPUT_TXT, 0)
+problem_a(PROGBLEM_INPUT_TXT, 5280)
 print("\n")
 
 
-problem_b(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
-problem_b(PROGBLEM_INPUT_TXT, 0)
+problem_b(EXAMPLE_INPUT1, 12)
+problem_b(PROGBLEM_INPUT_TXT, 16716)
