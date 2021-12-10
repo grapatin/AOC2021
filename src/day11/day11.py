@@ -7,7 +7,7 @@ Template code
 from pathlib import Path
 
 PROGBLEM_INPUT_TXT = Path("/Users/pergrapatin/Source/AOC2021/src/"\
-    +"dayXX/input.txt").read_text()
+    +"day11/input.txt").read_text()
 
 EXAMPLE_INPUT1 = """"""
 EXAMPLE_RESULT1 = 1514
