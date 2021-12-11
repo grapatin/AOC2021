@@ -117,7 +117,6 @@ def problem_b(input_string, expected_result):
         all_f = True
         for pos in storage_dict:
             if storage_dict[pos] < 0:
-                solution += 1
                 storage_dict[pos] = 0
             else:
                 all_f = False
