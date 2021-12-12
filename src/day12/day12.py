@@ -19,6 +19,9 @@ b-end"""
 EXAMPLE_RESULT1 = 10
 
 class CaveClass:
+    name :str
+    next_cave :set
+    type :str
     def __init__(self, name):
         self.visited = False
         if ord('a') <= ord(name[0]) <= ord('z'):
@@ -26,11 +29,10 @@ class CaveClass:
         else:
             self.type = 'large'
         self.name = name
-        self.next_caves = {}
+        self.next_caves = set()
 
     def add_next_cave(self, cave):
-        if cave.name not in self.next_caves:
-            self.next_caves[cave.name] = 1
+        self.next_caves.add(cave.name)
 
 def string_worker(input_string):
     """Helper string worker function
@@ -39,12 +41,11 @@ def string_worker(input_string):
     a_steps = [int(number) for number in input_string.split(',')]
     return a_steps
 
-def reg_walker(current_cave, cave_storage, path_taken, cave_paths_found, allowed_twice=''):
+def reg_walker(current_cave :str, cave_storage :dict, path_taken :str, cave_paths_found :dict, allowed_twice='')-> None:
     c_i = cave_storage[current_cave]
     for next_cave in c_i.next_caves:
         next_cave_i = cave_storage[next_cave]
         if next_cave_i.type == 'small' and next_cave in path_taken:
-            #abort
             if next_cave == allowed_twice:
                 reg_walker(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found, '')
         else:
