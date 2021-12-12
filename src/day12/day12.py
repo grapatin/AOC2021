@@ -53,18 +53,19 @@ def reg_walker(current_cave, cave_storage, path_taken, cave_paths_found):
                 reg_walker(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found)
     
 
-def reg_walker2(current_cave, cave_storage, path_taken, cave_paths_found):
+def reg_walker2(current_cave, cave_storage, path_taken, cave_paths_found, allowed_twice):
     c_i = cave_storage[current_cave]
     for next_cave in c_i.next_caves:
         next_cave_i = cave_storage[next_cave]
         if next_cave_i.type == 'small' and next_cave in path_taken:
             #abort
-            pass
+            if next_cave == allowed_twice:
+                reg_walker2(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found, '')
         else:
             if next_cave == 'end':
                 cave_paths_found[path_taken] = True
             else:
-                reg_walker(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found)
+                reg_walker2(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found, allowed_twice)
 
 
 def problem_a(input_string, expected_result):
@@ -102,7 +103,7 @@ def problem_a(input_string, expected_result):
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
 problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
-problem_a(PROGBLEM_INPUT_TXT, 0)
+problem_a(PROGBLEM_INPUT_TXT, 3856)
 print("\n")
 
 
@@ -131,10 +132,11 @@ def problem_b(input_string, expected_result):
         cave1_class.add_next_cave(cave2_class)
         cave2_class.add_next_cave(cave1_class)
 
-    for c_i in cave_storage:
-        if c_i.type == 'small':
-            small_caves_storage[c_i.name+'__'] = 1
-    reg_walker2('start', cave_storage, 'start', cave_paths_found, small_caves_storage)
+    for cave_name in cave_storage:
+        if cave_storage[cave_name].type == 'small' and cave_name not in 'start_end':
+            small_caves_storage[cave_name] = 1
+    for small_cave in small_caves_storage:
+        reg_walker2('start', cave_storage, 'start', cave_paths_found, small_cave)
 
     solution = len(cave_paths_found)
 
@@ -144,5 +146,5 @@ def problem_b(input_string, expected_result):
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
 problem_b(EXAMPLE_INPUT1, 36)
-problem_b(PROGBLEM_INPUT_TXT, 0)
+problem_b(PROGBLEM_INPUT_TXT, 116692)
 print("\n")
