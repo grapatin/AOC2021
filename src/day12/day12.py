@@ -39,33 +39,19 @@ def string_worker(input_string):
     a_steps = [int(number) for number in input_string.split(',')]
     return a_steps
 
-def reg_walker(current_cave, cave_storage, path_taken, cave_paths_found):
-    c_i = cave_storage[current_cave]
-    for next_cave in c_i.next_caves:
-        next_cave_i = cave_storage[next_cave]
-        if next_cave_i.type == 'small' and next_cave in path_taken:
-            #abort
-            pass
-        else:
-            if next_cave == 'end':
-                cave_paths_found[path_taken] = True
-            else:
-                reg_walker(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found)
-    
-
-def reg_walker2(current_cave, cave_storage, path_taken, cave_paths_found, allowed_twice):
+def reg_walker(current_cave, cave_storage, path_taken, cave_paths_found, allowed_twice=''):
     c_i = cave_storage[current_cave]
     for next_cave in c_i.next_caves:
         next_cave_i = cave_storage[next_cave]
         if next_cave_i.type == 'small' and next_cave in path_taken:
             #abort
             if next_cave == allowed_twice:
-                reg_walker2(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found, '')
+                reg_walker(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found, '')
         else:
             if next_cave == 'end':
                 cave_paths_found[path_taken] = True
             else:
-                reg_walker2(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found, allowed_twice)
+                reg_walker(next_cave, cave_storage, path_taken+'-'+next_cave, cave_paths_found, allowed_twice)
 
 
 def problem_a(input_string, expected_result):
@@ -136,7 +122,7 @@ def problem_b(input_string, expected_result):
         if cave_storage[cave_name].type == 'small' and cave_name not in 'start_end':
             small_caves_storage[cave_name] = 1
     for small_cave in small_caves_storage:
-        reg_walker2('start', cave_storage, 'start', cave_paths_found, small_cave)
+        reg_walker('start', cave_storage, 'start', cave_paths_found, small_cave)
 
     solution = len(cave_paths_found)
 
