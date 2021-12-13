@@ -47,7 +47,9 @@ def problem_a(input_string, expected_result):
 
     cord_storage = {}
     for row in part1.split('\n'):
-        cord_storage[row] = 1
+        x_, y_ = row.split(',')
+        typle = (int(x_), int(y_))
+        cord_storage[typle] = 1
 
     fold_no = 0
     fold_rows = part2.split('\n')
@@ -58,32 +60,33 @@ def problem_a(input_string, expected_result):
         if 'x' in fold_rows[fold_no]:
             #fold collumn
             for value in cord_storage:
-                x_, y_ = value.split(',')
-                if int(x_) > fold_line:
-                    x = abs(int(x_) - fold_line*2)
-                    new_storage[str(x)+','+y_] = 1
+                x, y = value
+                if x > fold_line:
+                    x = abs(x - fold_line*2)
+                    new_storage[(x,y)] = 1
                 else:
                     new_storage[value] = 1
         else:
             #fold row
             for value in cord_storage:
-                x_, y_ = value.split(',')
-                if int(y_) > fold_line:
-                    y = abs(int(y_) - fold_line*2)
-                    new_storage[x_+','+str(y)] = 1
+                x, y = value
+                if int(y) > fold_line:
+                    y = abs(y - fold_line*2)
+                    new_storage[(x,y)] = 1
                 else:
                     new_storage[value] = 1
         cord_storage = new_storage
         fold_no += 1
 
-    for y in range(0, 10):
-        for x in range(0,100):
-            if (str(x)+','+str(y)) in cord_storage:
+    print()
+    for y in range(0, 6):
+        for x in range(0,40):
+            if (x,y) in cord_storage:
                 print('#', end='')
             else:
-                print('.', end='')
-        print('|')
-        
+                print(' ', end='')
+        print()
+    print()
 
     solution = len(new_storage)
     if solution == expected_result:
