@@ -29,12 +29,6 @@ CC -> N
 CN -> C"""
 EXAMPLE_RESULT1 = 1514
 
-def string_worker(input_string):
-    """Helper string worker function
-    """
-    a_steps = input_string.split("\n")
-    a_steps = [int(number) for number in input_string.split(',')]
-    return a_steps
 
 def problem_a(input_string, expected_result):
     """Problem A solved function
@@ -52,10 +46,7 @@ def problem_a(input_string, expected_result):
         work_me = ''
         for pos in range(len(template)-1):
             search_str = template[pos]+template[pos+1]
-            if search_str in rules_dict:
-                work_me += template[pos] + rules_dict[search_str]
-            else:
-                work_me += template[pos]
+            work_me += template[pos] + rules_dict[search_str]
         work_me += template[-1]
         template = work_me
         #print('1:', template)
@@ -68,7 +59,6 @@ def problem_a(input_string, expected_result):
             count_dict[char] = 1
     
     v=list(count_dict.values())
-    k=list(count_dict.keys())
     solution = max(v) - min(v)
 
     if solution == expected_result:
@@ -82,14 +72,11 @@ print("\n")
 
 def worker_improve_rule(w_string, rules_dict_ex, count_dict_ext, rules_dict, turns):
     rule_string = w_string
-    for l in range(turns):
+    for _ in range(turns):
         work_me = ''
         for pos in range(len(w_string)-1):
             search_str = w_string[pos]+w_string[pos+1]
-            if search_str in rules_dict:
-                work_me += w_string[pos] + rules_dict[search_str]
-            else:
-                work_me += w_string[pos]
+            work_me += w_string[pos] + rules_dict[search_str]
         work_me += w_string[-1]
         w_string = work_me
 
@@ -130,8 +117,6 @@ def problem_b(input_string, expected_result):
         worker_improve_rule(key, rules_dict_ext, count_dict_ext, rules_dict, 20)
 
     template = worker2(template, rules_dict_ext)    
-    #dummy = worker2(template, rules_dict_ext)    
-    #print('2:', dummy)
 
     answer_dict = {}
     for rule in rules_dict_ext:
@@ -148,7 +133,6 @@ def problem_b(input_string, expected_result):
     answer_dict[template[-1]] += 1
 
     v=list(answer_dict.values())
-    k=list(answer_dict.keys())
     solution = max(v) - min(v)
 
     if solution == expected_result:
@@ -160,10 +144,7 @@ def worker2(template, rules_dict_ext):
     work_me = ''
     for pos in range(len(template)-1):
         search_str = template[pos]+template[pos+1]
-        if search_str in rules_dict_ext:
-            work_me += rules_dict_ext[search_str]
-        else:
-            work_me += template[pos]
+        work_me += rules_dict_ext[search_str]
     work_me += template[-1]
     template = work_me
     return template
