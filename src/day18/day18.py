@@ -108,3 +108,47 @@ problem_a("""[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
 print('\n')
 problem_a(PROGBLEM_INPUT_TXT, 3763)
 print("\n")
+
+def problem_b(input_string, expected_result):
+    """Problem B solved function
+    """
+    rows = input_string.split('\n')
+    solution = 0
+    for i in range(len(rows)):
+        for j in range(len(rows)):
+            if (i != j):
+                first_row = rows[i]
+                base = json.loads(first_row)
+                row = json.loads(rows[j])
+                base = [base] + [row]
+                json_copy = ''
+                while json_copy != json.dumps(base): 
+                    json_copy = json.dumps(base)
+                    base = test.explode_do_and_check(base)
+                    #print('After explode:', base)
+                    base = test.split(base)
+                    #print('After split:', base)    
+
+                snail_fish_number = SnailFishNumber(json.dumps(base,separators=(',', ':')))
+                new_solution = snail_fish_number.calc_magnitude()
+                if new_solution > solution:
+                    solution = new_solution
+
+    if solution == expected_result:
+        print("Correct solution found:", solution)
+    else:
+        print("Incorrect solution, we got:", solution, "expected:", expected_result)
+
+problem_b("""[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
+[[[5,[2,8]],4],[5,[[9,9],0]]]
+[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
+[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]
+[[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]
+[[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]
+[[[[5,4],[7,7]],8],[[8,3],8]]
+[[9,3],[[9,9],[6,[4,9]]]]
+[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
+[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]""", 3993)
+print('\n')
+problem_b(PROGBLEM_INPUT_TXT, 0)
+print("\n")
