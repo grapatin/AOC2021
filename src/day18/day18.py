@@ -1,10 +1,10 @@
 """
 Template code
-"""#import cmath for complex number operations
-#from abc import abstractproperty
-#import cmath
-#import Path for file operations
+"""
 from pathlib import Path
+import json
+import test
+
 
 PROGBLEM_INPUT_TXT = Path("/Users/pergrapatin/Source/AOC2021/src/"\
     +"day18/input.txt").read_text()
@@ -73,21 +73,38 @@ def problem_a(input_string, expected_result):
     """Problem A solved function
     """
     rows = input_string.split('\n')
-    snail_fish_base :SnailFishNumber 
-    snail_fish_base = SnailFishNumber(rows.pop(0))
+    first_row = rows.pop(0)
+    base = json.loads(first_row)
     
-    solution = snail_fish_base.calc_magnitude()
+    for row in rows:
+        row = json.loads(row)
+        base = [base] + [row]
+        json_copy = ''
+        while json_copy != json.dumps(base): 
+            json_copy = json.dumps(base)
+            base = test.explode_do_and_check(base)
+            #print('After explode:', base)
+            base = test.split(base)
+            #print('After split:', base)    
+
+    snail_fish_number = SnailFishNumber(json.dumps(base,separators=(',', ':')))
+    solution = snail_fish_number.calc_magnitude()
 
     if solution == expected_result:
         print("Correct solution found:", solution)
     else:
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
-#problem_a('[[1,2],3]', EXAMPLE_RESULT1)
-#problem_a('[[[[1,3],[5,3]],[[1,3],[8,7]]],[[[4,9],[6,9]],[[8,2],[7,3]]]]', EXAMPLE_RESULT1)
-
-problem_a("""[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]""", 445)
-
-problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
-problem_a(PROGBLEM_INPUT_TXT, 0)
+problem_a("""[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
+[[[5,[2,8]],4],[5,[[9,9],0]]]
+[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
+[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]
+[[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]
+[[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]
+[[[[5,4],[7,7]],8],[[8,3],8]]
+[[9,3],[[9,9],[6,[4,9]]]]
+[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
+[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]""", 4140)
+print('\n')
+problem_a(PROGBLEM_INPUT_TXT, 3763)
 print("\n")
