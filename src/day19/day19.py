@@ -314,7 +314,11 @@ def problem_a(input_string, expected_result):
     manhattan_distance = 0
     for scanner1 in scanner_list:
         for scanner2 in scanner_list:
-            temp_dist = scanner1.
+            temp_dist = abs(scanner1.x - scanner2.x) + abs(scanner1.y - scanner2.y) + abs(scanner1.z - scanner2.z)
+            if temp_dist > manhattan_distance:
+                manhattan_distance = temp_dist
+
+    print('Manhattan_distance is:', manhattan_distance)
 
 problem_a("""--- scanner 0 ---
 404,-588,-901
