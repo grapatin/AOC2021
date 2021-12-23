@@ -68,6 +68,7 @@ class BeaconClass:
         self.z = z
         self.beacon_relations = {}
         self.name = '(' + str(x) + ',' +str(y) + ',' + str(z)+')'
+        self.cords = [x, y, z]
 
     def store_distance(self, other_beacon):
         if self != other_beacon:
@@ -152,8 +153,23 @@ class ScannerClass:
             for other_beacon in self.beacons.values():
                 beacon.store_distance(other_beacon)
 
+    def add_cords(self, cords):
+        length = len(self.beacons)
+        self.beacons[length] = BeaconClass(self, cords[0], cords[1], cords[2])
+
+
+    def recalculate_dist(self):
+        #calculate relative position between beacon and all other beacon
+        for beacon in self.beacons.values():
+            for other_beacon in self.beacons.values():
+                beacon.store_distance(other_beacon)
+
     def return_number_of_beacons(self):
-        return len(self.beacons)
+        temp_dict = {}
+        for beacon in self.beacons.values():
+            temp_dict[tuple(beacon.cords)] = 1
+
+        return len(temp_dict)
         
     def get_rotated_cord(self, xyz_a):
         rotation_index = self.rotation_index
@@ -238,6 +254,12 @@ class ScannerClass:
                                 other_scanner.y = scanner_location_y
                                 other_scanner.z = scanner_location_z
                                 print(other_scanner.scanner_id, 'is at:', [other_scanner.x, other_scanner.y, other_scanner.z])
+                                for beacon_id in other_scanner.beacons:
+                                    cords = other_scanner.beacons[beacon_id].cords
+                                    rot_cords = other_scanner.get_rotated_cord(cords)
+                                    cords_from_scan_0 = [rot_cords[0]+scanner_location_x, rot_cords[1]+scanner_location_y, rot_cords[2]+scanner_location_z]
+                                    self.add_cords(cords_from_scan_0)
+                                self.recalculate_dist()
                                 return True
                         else:
                             pass
@@ -278,15 +300,9 @@ def problem_a(input_string, expected_result):
                 all_identified = False
                 if base_scanner.find_common_beacon(other_scanner):
                     identified_scanners[other_scanner] = True
-        searched_scanners[base_scanner] = True
-        for new_base in identified_scanners:
-            if new_base not in searched_scanners and identified_scanners[new_base] == True:
-                base_scanner = new_base
-                break
-
+        
     all_beacons = 0
-    for scan in scanner_list:
-        all_beacons += scan.return_number_of_beacons()
+    all_beacons = base_scanner.return_number_of_beacons()
 
     solution =  all_beacons
 
@@ -294,6 +310,11 @@ def problem_a(input_string, expected_result):
         print("Correct solution found:", solution)
     else:
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
+
+    manhattan_distance = 0
+    for scanner1 in scanner_list:
+        for scanner2 in scanner_list:
+            temp_dist = scanner1.
 
 problem_a("""--- scanner 0 ---
 404,-588,-901
