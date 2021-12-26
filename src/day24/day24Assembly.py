@@ -166,11 +166,10 @@ def problem_a(input_string, expected_result):
     """Problem A solved function
     """
     code_strings = string_worker(input_string)
-    start_value = 97919997299495
-    #             12345678901234
-    #             979196 7529 6495
-    #             979199 7529 9495
-    #             979199 9729 9495
+    start_value = 51619131181131
+    #             51619131291131
+    #             516191 9729 1131
+
     result = 1
 
     while (result != 0):
@@ -191,5 +190,5 @@ def problem_a(input_string, expected_result):
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
 #problem_a(EXAMPLE_INPUT1, 0)
-problem_a(PROGBLEM_INPUT_TXT, 2951)  #92919675296445 to low
+problem_a(PROGBLEM_INPUT_TXT, 2951)  #51619131291131 to high
 print("\n")
