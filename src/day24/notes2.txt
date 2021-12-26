@@ -1,0 +1,12 @@
+
+w5 skall vara w4+8 alltså w4 = 1 och w5 = 9
+
+
+w4 = 1
+w5 = 9
+w8 skall vara w7-2
+w10 = w9+7
+w11 = w6
+w12 = 
+w13 = 
+w14 =
