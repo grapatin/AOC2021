@@ -10,9 +10,14 @@ PROGBLEM_INPUT_TXT = Path("/Users/pergrapatin/Source/AOC2021/src/"\
     +"day22/input.txt").read_text()
 
 EXAMPLE_INPUT1 = """on x=10..12,y=10..12,z=10..12
-on x=11..13,y=11..13,z=11..13
-off x=9..11,y=9..11,z=9..11"""
-EXAMPLE_RESULT1 = 590784
+on x=11..13,y=11..13,z=11..13"""
+# EXAMPLE_INPUT1 = """on x=10..10,y=10..12,z=10..12
+# on x=11..12,y=10..10,z=10..12
+# on x=11..12,y=11..12,z=10..10
+# on x=11..13,y=11..13,z=11..13"""
+
+EXAMPLE_RESULT1 = 46
+
 
 class AllCubes:
     def __init__(self):
@@ -31,7 +36,6 @@ class AllCubes:
         
 class CubeClass:
     def __init__(self, row):
-
         parts = row.split('=')
         self.x1 = int(parts[1])
         self.x2 = int(parts[2])
@@ -134,17 +138,14 @@ def problem_b(input_string, expected_result):
         new_cube = CubeClass(row)
         if 'on' in row:
             solution += new_cube.size_of_cube
-            solution -= all_cubes.find_overlapp(new_cube)
             all_cubes.add_cube(new_cube)
         else:
-            solution -= all_cubes.find_overlapp(new_cube)
+            solution -= new_cube.size_of_cube
 
     if solution == expected_result:
         print("Correct solution found:", solution)
     else:
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
-
-
 
 problem_b(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
 #problem_a(PROGBLEM_INPUT_TXT, 0)
