@@ -19,10 +19,15 @@ on x=-27..23,y=-28..26,z=-21..29
 on x=-39..5,y=-6..47,z=-3..44
 on x=-30..21,y=-8..43,z=-13..34
 on x=-22..26,y=-27..20,z=-29..19
+off x=-48..-32,y=26..41,z=-47..-37
 on x=-12..35,y=6..50,z=-50..-2
+off x=-48..-32,y=-32..-16,z=-15..-5
 on x=-18..26,y=-33..15,z=-7..46
+off x=-40..-22,y=-38..-28,z=23..41
 on x=-16..35,y=-41..10,z=-47..6
+off x=-32..-23,y=11..30,z=-14..3
 on x=-49..-5,y=-3..45,z=-29..18
+off x=18..30,y=-20..-8,z=-3..13
 on x=-41..9,y=-7..43,z=-33..15"""
 
 
@@ -35,13 +40,11 @@ class AllCubes:
 
     def add_cube(self, row):
         cube_from_storage :CubeClass
-
         rows = ''
         for cube_from_storage in self.storage:
             rows = cube_from_storage.create_new_rows_from_this_row(row)
             if (rows != row): #We have a split, stop and continue
                 break
-
         if len(rows) > 0:
                 for new_row in rows.split('\n'):
                     if new_row == row: #we have found a cube that actually does not need any further changes
@@ -54,14 +57,20 @@ class AllCubes:
             new_cube = CubeClass(row)
             self.storage[new_cube] = new_cube
 
-
-    def find_overlapp(self, new_cube):
-        cube :CubeClass
-        overlapp = 0
-        for cube in self.storage:
-            overlapp += cube.size_of_overlapp(new_cube)
-
-        return overlapp
+    def off_cube(self, row):
+        cube_from_storage :CubeClass
+        #run all existings cubes against this new cube
+        cube_off = CubeClass(row)
+        new_storage = {}
+        for cube_from_storage in self.storage:
+            rows = cube_off.create_new_rows_from_this_row(cube_from_storage.row)
+            #print('off rows:', rows)
+            if (len(rows) > 0):
+                for new_row in rows.split('\n'):
+                    new_cube = CubeClass(new_row)
+                    new_storage[new_cube] = new_cube
+        self.storage = new_storage
+            
         
     def calc_size(self):
         cube :CubeClass
@@ -70,8 +79,6 @@ class AllCubes:
             count += cube.size_of_cube
 
         return count
-
-
 
 class CubeClass:
     def __init__(self, row):
@@ -99,13 +106,13 @@ class CubeClass:
                 existing_high = int(existing_parts[i+2])
                 overlapp, overlapp_low, overlapp_high = self.find_over_lapp_cords(new_low, new_high, existing_low, existing_high)
                 if overlapp:
-                    print('Overlapp found', cord[int(i / 3)], ':', new_low, new_high, existing_low, existing_high, overlapp_low, overlapp_high)
+                    #print('Overlapp found', cord[int(i / 3)], ':', new_low, new_high, existing_low, existing_high, overlapp_low, overlapp_high)
                     cord_array.append(new_low)
                     cord_array.append(overlapp_low)
                     cord_array.append(overlapp_high)
                     cord_array.append(new_high)
                 else:
-                    print('No overlapp found', cord[int(i / 3)], ':', new_low, new_high, existing_low, existing_high)
+                    #print('No overlapp found', cord[int(i / 3)], ':', new_low, new_high, existing_low, existing_high)
                     #since one of the cord didn't overlapp there is no way they can overlapp
                     return row 
             x_new_low = cord_array[0]
@@ -127,31 +134,31 @@ class CubeClass:
             if x_new_low != x_overlapp_low: 
                 str_temp = "on x="+str(x_new_low)+'='+str(x_overlapp_low-1)+'=y='+str(y_new_low)+'='+str(y_new_high)+'=z='+str(z_new_low)+'='+str(z_new_high)
                 rows += str_temp + '\n'
-                print('Row x before overlapp: ' + str_temp)
+                #print('Row x before overlapp: ' + str_temp)
             if x_new_high != x_overlapp_high:
                 str_temp = "on x="+str(x_overlapp_high+1)+'='+str(x_new_high)+'=y='+str(y_new_low)+'='+str(y_new_high)+'=z='+str(z_new_low)+'='+str(z_new_high)
                 rows += str_temp + '\n'
-                print('Row x after overlapp: ' + str_temp)
+                #print('Row x after overlapp: ' + str_temp)
            
             if y_new_low != y_overlapp_low:
                 str_temp = "on x="+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_new_low)+'='+str(y_overlapp_low - 1)+'=z='+str(z_new_low)+'='+str(z_new_high)
                 rows += str_temp + '\n'
-                print('Row y before overlapp: ' + str_temp)
+                #print('Row y before overlapp: ' + str_temp)
 
             if y_new_high != y_overlapp_high:
                 str_temp = 'on x='+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_overlapp_high+1)+'='+str(y_new_high)+'=z='+str(z_new_low)+'='+str(z_new_high)
                 rows += str_temp + '\n'
-                print('Row y after overlapp: ' + str_temp)
+                #print('Row y after overlapp: ' + str_temp)
             
             if z_new_low != z_overlapp_low:
                 str_temp = 'on x='+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_overlapp_low)+'='+str(y_overlapp_high)+'=z='+str(z_new_low)+'='+str(z_overlapp_low-1)
                 rows += str_temp + '\n'
-                print('Row z before overlapp: ' + str_temp)
+                #print('Row z before overlapp: ' + str_temp)
             
             if z_new_high != z_overlapp_high:
                 str_temp = 'on x='+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_overlapp_low)+'='+str(y_overlapp_high) +'=z='+str(z_overlapp_high+1)+'='+str(z_new_high)
                 rows += str_temp + '\n'
-                print('Row z after overlapp: ' + str_temp)
+                #print('Row z after overlapp: ' + str_temp)
         return rows[:-1]
 
     def find_over_lapp_cords(self2, new_low, new_high, current_low, current_high):
@@ -222,9 +229,6 @@ problem_a(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
 #problem_a(PROGBLEM_INPUT_TXT, 0)
 print("\n")
 
-#TODO solve that we can have multiple overlapps
-
-
 def problem_b(input_string, expected_result):
     """Problem A solved function
     """
@@ -236,7 +240,7 @@ def problem_b(input_string, expected_result):
         if 'on' in row:
             all_cubes.add_cube(row)
         else:
-            pass
+            all_cubes.off_cube(row)
 
     solution = all_cubes.calc_size()
 
@@ -246,5 +250,5 @@ def problem_b(input_string, expected_result):
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
 problem_b(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
-#problem_a(PROGBLEM_INPUT_TXT, 0)
+problem_b(PROGBLEM_INPUT_TXT, 0)
 print("\n")
