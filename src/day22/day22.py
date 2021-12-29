@@ -9,22 +9,51 @@ from pathlib import Path
 PROGBLEM_INPUT_TXT = Path("/Users/pergrapatin/Source/AOC2021/src/"\
     +"day22/input.txt").read_text()
 
-EXAMPLE_INPUT1 = """on x=10..12,y=10..12,z=10..12
-on x=11..13,y=11..13,z=11..13"""
-# EXAMPLE_INPUT1 = """on x=10..10,y=10..12,z=10..12
-# on x=11..12,y=10..10,z=10..12
-# on x=11..12,y=11..12,z=10..10
-# on x=11..13,y=11..13,z=11..13"""
+EXAMPLE_INPUT1 = """on x=-20..26,y=-36..17,z=-47..7
+on x=-20..33,y=-21..23,z=-26..28
+on x=-22..28,y=-29..23,z=-38..16
+on x=-46..7,y=-6..46,z=-50..-1
+on x=-49..1,y=-3..46,z=-24..28
+on x=2..47,y=-22..22,z=-23..27
+on x=-27..23,y=-28..26,z=-21..29
+on x=-39..5,y=-6..47,z=-3..44
+on x=-30..21,y=-8..43,z=-13..34
+on x=-22..26,y=-27..20,z=-29..19
+on x=-12..35,y=6..50,z=-50..-2
+on x=-18..26,y=-33..15,z=-7..46
+on x=-16..35,y=-41..10,z=-47..6
+on x=-49..-5,y=-3..45,z=-29..18
+on x=-41..9,y=-7..43,z=-33..15"""
+
 
 EXAMPLE_RESULT1 = 46
-
 
 class AllCubes:
     def __init__(self):
         self.storage = {}
+        self.first = True
 
-    def add_cube(self, cube):
-        self.storage[cube] = 1
+    def add_cube(self, row):
+        cube_from_storage :CubeClass
+
+        rows = ''
+        for cube_from_storage in self.storage:
+            rows = cube_from_storage.create_new_rows_from_this_row(row)
+            if (rows != row): #We have a split, stop and continue
+                break
+
+        if len(rows) > 0:
+                for new_row in rows.split('\n'):
+                    if new_row == row: #we have found a cube that actually does not need any further changes
+                        new_cube = CubeClass(new_row)
+                        self.storage[new_cube] = new_cube
+                    else: #we need to check so this does not conflict with something else
+                        self.add_cube(new_row)
+        if self.first:
+            self.first = False
+            new_cube = CubeClass(row)
+            self.storage[new_cube] = new_cube
+
 
     def find_overlapp(self, new_cube):
         cube :CubeClass
@@ -34,8 +63,19 @@ class AllCubes:
 
         return overlapp
         
+    def calc_size(self):
+        cube :CubeClass
+        count = 0
+        for cube in self.storage:
+            count += cube.size_of_cube
+
+        return count
+
+
+
 class CubeClass:
     def __init__(self, row):
+        self.row = row
         parts = row.split('=')
         self.x1 = int(parts[1])
         self.x2 = int(parts[2])
@@ -45,38 +85,94 @@ class CubeClass:
         self.z2 = int(parts[8])
         self.size_of_cube = ((self.x2-self.x1+1)*(self.y2-self.y1+1)*(self.z2-self.z1+1))   
 
-    def inside_cube(self, x_t, y_t, z_t):
-        if self.x1 <= x_t <= self.x2:
-            if self.y1 <= y_t <= self.y2:
-                if self.z1 <= z_t <= self.z2:
-                    return True
-        return False
+    def create_new_rows_from_this_row(self, row):
+        cord = ['x', 'y', 'z']
+        cord_array = []
+        rows = ''
+        if row != self.row:
+            new_parts = row.split('=')
+            existing_parts = self.row.split('=')
+            for i in range(0,9,3):
+                new_low = int(new_parts[i+1])
+                new_high = int(new_parts[i+2])
+                existing_low = int(existing_parts[i+1])
+                existing_high = int(existing_parts[i+2])
+                overlapp, overlapp_low, overlapp_high = self.find_over_lapp_cords(new_low, new_high, existing_low, existing_high)
+                if overlapp:
+                    print('Overlapp found', cord[int(i / 3)], ':', new_low, new_high, existing_low, existing_high, overlapp_low, overlapp_high)
+                    cord_array.append(new_low)
+                    cord_array.append(overlapp_low)
+                    cord_array.append(overlapp_high)
+                    cord_array.append(new_high)
+                else:
+                    print('No overlapp found', cord[int(i / 3)], ':', new_low, new_high, existing_low, existing_high)
+                    #since one of the cord didn't overlapp there is no way they can overlapp
+                    return row 
+            x_new_low = cord_array[0]
+            x_overlapp_low = cord_array[1]
+            x_overlapp_high = cord_array[2]
+            x_new_high = cord_array[3]
 
-    def size_of_overlapp(self, newCube):
-        overlapp_b = False
-        overlapp = 0
-        inside_x1 = self.x1
-        inside_x2 = self.x2
-        inside_y1 = self.y1
-        inside_y2 = self.y2
-        inside_z1 = self.z1
-        inside_z2 = self.z2
-        if self.inside_cube(newCube.x1, newCube.y1, newCube.z1):
-            overlapp_b = True
-            inside_x1 = newCube.x1
-            inside_y1 = newCube.y1
-            inside_z1 = newCube.z1
-        if self.inside_cube(newCube.x2, newCube.y2, newCube.z2):
-            overlapp_b = True
-            inside_x2 = newCube.x2
-            inside_y2 = newCube.y2
-            inside_z2 = newCube.z2
+            y_new_low = cord_array[4]
+            y_overlapp_low = cord_array[5]
+            y_overlapp_high = cord_array[6]
+            y_new_high = cord_array[7]
+            
+            z_new_low = cord_array[8]
+            z_overlapp_low = cord_array[9]
+            z_overlapp_high = cord_array[10]
+            z_new_high = cord_array[11]
+            
+            #create new string, 3 scenarious for each x,y,z, part low outside before overlapp, overlapp, part after overlapp
+            if x_new_low != x_overlapp_low: 
+                str_temp = "on x="+str(x_new_low)+'='+str(x_overlapp_low-1)+'=y='+str(y_new_low)+'='+str(y_new_high)+'=z='+str(z_new_low)+'='+str(z_new_high)
+                rows += str_temp + '\n'
+                print('Row x before overlapp: ' + str_temp)
+            if x_new_high != x_overlapp_high:
+                str_temp = "on x="+str(x_overlapp_high+1)+'='+str(x_new_high)+'=y='+str(y_new_low)+'='+str(y_new_high)+'=z='+str(z_new_low)+'='+str(z_new_high)
+                rows += str_temp + '\n'
+                print('Row x after overlapp: ' + str_temp)
+           
+            if y_new_low != y_overlapp_low:
+                str_temp = "on x="+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_new_low)+'='+str(y_overlapp_low - 1)+'=z='+str(z_new_low)+'='+str(z_new_high)
+                rows += str_temp + '\n'
+                print('Row y before overlapp: ' + str_temp)
 
-        if overlapp_b:
-            overlapp = (inside_x2 - inside_x1 + 1)*(inside_y2 - inside_y1 + 1)*(inside_z2-inside_z1 + 1)
-        return overlapp
+            if y_new_high != y_overlapp_high:
+                str_temp = 'on x='+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_overlapp_high+1)+'='+str(y_new_high)+'=z='+str(z_new_low)+'='+str(z_new_high)
+                rows += str_temp + '\n'
+                print('Row y after overlapp: ' + str_temp)
+            
+            if z_new_low != z_overlapp_low:
+                str_temp = 'on x='+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_overlapp_low)+'='+str(y_overlapp_high)+'=z='+str(z_new_low)+'='+str(z_overlapp_low-1)
+                rows += str_temp + '\n'
+                print('Row z before overlapp: ' + str_temp)
+            
+            if z_new_high != z_overlapp_high:
+                str_temp = 'on x='+str(x_overlapp_low)+'='+str(x_overlapp_high)+'=y='+str(y_overlapp_low)+'='+str(y_overlapp_high) +'=z='+str(z_overlapp_high+1)+'='+str(z_new_high)
+                rows += str_temp + '\n'
+                print('Row z after overlapp: ' + str_temp)
+        return rows[:-1]
 
-class StorageClass:
+    def find_over_lapp_cords(self2, new_low, new_high, current_low, current_high):
+        #find X overlapp
+        if new_low > current_high or new_high < current_low:
+            #no overlapp
+            return False, 0, 0
+        else:
+            #we have a overlapp
+            if new_low >= current_low:
+                overlapp_low = new_low
+            else:
+                overlapp_low = current_low
+            if new_high <= current_high:
+                overlapp_high = new_high
+            else:
+                overlapp_high = current_high
+            return True, overlapp_low, overlapp_high
+        
+
+class StorageClass_partI:
     def __init__(self):
         self.storage_dict = {}
 
@@ -85,12 +181,13 @@ class StorageClass:
 
 
 def problem_a(input_string, expected_result):
+    global EXAMPLE_RESULT1
     """Problem A solved function
     """
     input_string = input_string.replace('..', '=')
     input_string = input_string.replace(',','=')
     rows = input_string.split('\n')
-    storage_class = StorageClass()
+    storage_class = StorageClass_partI()
     for row in rows:
         parts = row.split('=')
         pos_on = True
@@ -114,8 +211,10 @@ def problem_a(input_string, expected_result):
         if value:
             solution += 1
 
+    EXAMPLE_RESULT1 = solution
     if solution == expected_result:
         print("Correct solution found:", solution)
+
     else:
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
@@ -133,14 +232,13 @@ def problem_b(input_string, expected_result):
     input_string = input_string.replace(',','=')
     rows = input_string.split('\n')
     all_cubes :AllCubes = AllCubes()
-    solution = 0
     for row in rows:
-        new_cube = CubeClass(row)
         if 'on' in row:
-            solution += new_cube.size_of_cube
-            all_cubes.add_cube(new_cube)
+            all_cubes.add_cube(row)
         else:
-            solution -= new_cube.size_of_cube
+            pass
+
+    solution = all_cubes.calc_size()
 
     if solution == expected_result:
         print("Correct solution found:", solution)
