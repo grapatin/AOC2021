@@ -68,7 +68,7 @@ class Throws:
         self.throw = []
         p1 = PlayerObject('p1', p1_start)
         p2 = PlayerObject('p2', p2_start)
-        self.throw.append([PlayerClass(p1, p2)])
+        self.throw.append([PlayerClass(p1, p2, 1)])
         self.possibilities_dict = self.calculate_probability()
         self.winner_uni = {
             'p1' : 0,
@@ -87,27 +87,24 @@ class Throws:
         
         for player_rep in self.throw[self.throw_number]:
             new_player_array = []
+            no_uni = player_rep.no_uni
             #get active player object
             player_object = player_rep.player_dict[self.active_player]
-            not_active_player_object = player_rep.player_dict[self.not_active_player]
+            not_active_player_object = player_rep.player_dict[self.not_active_player].copy()
             #add all new alternatives
             for move_possibility in self.possibilities_dict:
                 move_d = move_possibility
-                new_universes = self.possibilities_dict[move_possibility]
-                new_clone = player_object.move_and_clone(move_d, new_universes)
+                new_universes = self.possibilities_dict[move_possibility]*no_uni
+                new_clone = player_object.move_and_clone(move_d)
                 if new_clone.score < MAX_SCORE:
-                    new_player_array.append(new_clone)
+                    if self.active_player == 'p1':
+                        new_player_rep = PlayerClass(new_clone, not_active_player_object, new_universes)
+                    else:
+                        new_player_rep = PlayerClass(not_active_player_object, new_clone, new_universes)
+                    self.throw[next_throw].append(new_player_rep)
                 else:
                     #store away as a victory for active player
-                    self.winner_uni[self.active_player] += new_clone.no_universes
-            #store all new alternatives in next throw
-            for new_p_object in new_player_array:
-                not_active_player_object.no_universes = new_p_object.no_universes
-                if self.active_player == 'p1':
-                    new_player_rep = PlayerClass(new_p_object, not_active_player_object)
-                else:
-                    new_player_rep = PlayerClass(not_active_player_object, new_p_object)
-                self.throw[next_throw].append(new_player_rep)
+                    self.winner_uni[self.active_player] += new_universes
         self.throw_number = next_throw
         self.active_player, self.not_active_player = self.not_active_player, self.active_player
 
@@ -125,26 +122,28 @@ class Throws:
         return storage_dict
 
 class PlayerClass:
-    def __init__(self, p1, p2) -> None:
+    def __init__(self, p1, p2, no_uni) -> None:
+        self.no_uni = no_uni
         self.player_dict = {
             'p1' : p1,
             'p2' : p2
         }
 
 class PlayerObject:
-    def __init__(self, player, pos, score = 0, no_universes = 1):
+    def __init__(self, player, pos, score = 0):
         self.player = player
         self.pos = pos
         self.score = score
-        self.no_universes = no_universes
         self.player_score_list = list(range(1,11))
 
-    def move_and_clone(self, move, no_universes):
+    def move_and_clone(self, move):
         new_pos = self.pos + move
         new_score = self.score + self.player_score_list[new_pos % 10]
-        new_no_universes = self.no_universes*no_universes
-        new_score_keeper = PlayerObject(self.player, new_pos, new_score, new_no_universes)
+        new_score_keeper = PlayerObject(self.player, new_pos, new_score)
         return new_score_keeper
+
+    def copy(self):
+        return PlayerObject(self.player, self.pos, self.score)
 
 
 def playerFunction(throw :Throws):
@@ -159,7 +158,7 @@ def problem_b(input_string, expected_result):
     """Problem A solved function
     """
 
-    throw = Throws(input_string[0],input_string[1])
+    throw = Throws(input_string[0]-1,input_string[1]-1)
     playerFunction(throw)
 
     print('p1:', throw.winner_uni['p1'])
@@ -175,7 +174,6 @@ def problem_b(input_string, expected_result):
     else:
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
-problem_b([4, 8], 444356092776315)
-                #5136615862079541867
-#problem_b([5, 8], 0)
+#problem_b([4, 8], 444356092776315)
+problem_b([5, 8], 630947104784464)
 print("\n")
