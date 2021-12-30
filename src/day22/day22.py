@@ -31,7 +31,7 @@ off x=18..30,y=-20..-8,z=-3..13
 on x=-41..9,y=-7..43,z=-33..15"""
 
 
-EXAMPLE_RESULT1 = 46
+EXAMPLE_RESULT1 = 590784
 
 class AllCubes:
     def __init__(self):
@@ -250,5 +250,5 @@ def problem_b(input_string, expected_result):
         print("Incorrect solution, we got:", solution, "expected:", expected_result)
 
 problem_b(EXAMPLE_INPUT1, EXAMPLE_RESULT1)
-problem_b(PROGBLEM_INPUT_TXT, 0)
+problem_b(PROGBLEM_INPUT_TXT, 1218645427221987)
 print("\n")
